@@ -1,0 +1,1793 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Global AI Trust & Adoption Dashboard 2025</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/countup.js/2.8.0/countUp.umd.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #6366f1;
+            --secondary: #ec4899;
+            --accent: #14b8a6;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --dark: #0f172a;
+            --light: #f8fafc;
+            --glass: rgba(255, 255, 255, 0.1);
+            --glass-border: rgba(255, 255, 255, 0.2);
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: white;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Animated Background */
+        .bg-animation {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            z-index: 0;
+            opacity: 0.5;
+        }
+
+        .floating-bubble {
+            position: absolute;
+            border-radius: 50%;
+            background: radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.3), transparent);
+            animation: float 20s infinite ease-in-out;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0) translateX(0) scale(1); }
+            33% { transform: translateY(-100px) translateX(50px) scale(1.1); }
+            66% { transform: translateY(50px) translateX(-50px) scale(0.9); }
+        }
+
+        /* Neural Network Animation */
+        .neural-network {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            pointer-events: none;
+            opacity: 0.1;
+        }
+
+        .neural-line {
+            position: absolute;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(99, 102, 241, 0.5), transparent);
+            animation: pulse-line 3s infinite;
+        }
+
+        @keyframes pulse-line {
+            0%, 100% { opacity: 0; transform: scaleX(0); }
+            50% { opacity: 1; transform: scaleX(1); }
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* CTA Banner */
+        .cta-banner {
+            background: linear-gradient(135deg, #667eea 0%, #ec4899 50%, #f59e0b 100%);
+            padding: 2px;
+            border-radius: 24px;
+            margin-bottom: 2rem;
+            animation: gradient-shift 5s ease infinite;
+            background-size: 200% 200%;
+        }
+
+        @keyframes gradient-shift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .cta-content {
+            background: rgba(15, 23, 42, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 22px;
+            padding: 2rem;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .cta-content::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(99, 102, 241, 0.1) 0%, transparent 70%);
+            animation: rotate 10s linear infinite;
+        }
+
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .cta-title {
+            font-size: 2rem;
+            font-weight: 800;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, #fff 0%, #ec4899 50%, #f59e0b 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: gradient-shift 3s ease infinite;
+            background-size: 200% 200%;
+        }
+
+        .cta-subtitle {
+            font-size: 1.1rem;
+            opacity: 0.9;
+            margin-bottom: 1.5rem;
+        }
+
+        .cta-button {
+            display: inline-block;
+            padding: 1rem 3rem;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            text-decoration: none;
+            border-radius: 50px;
+            font-weight: 700;
+            font-size: 1.1rem;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(99, 102, 241, 0.3);
+        }
+
+        .cta-button::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+
+        .cta-button:hover {
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 0 15px 40px rgba(99, 102, 241, 0.5);
+        }
+
+        .cta-button:hover::before {
+            width: 300px;
+            height: 300px;
+        }
+
+        /* Header with Glassmorphism */
+        .header {
+            background: var(--glass);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            animation: slideDown 0.8s ease-out;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+        }
+
+        @keyframes slideDown {
+            from { transform: translateY(-50px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        h1 {
+            font-size: 3rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #fff 0%, #ec4899 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 1rem;
+            animation: glow 3s ease-in-out infinite;
+        }
+
+        @keyframes glow {
+            0%, 100% { filter: brightness(1); }
+            50% { filter: brightness(1.2); }
+        }
+
+        .subtitle {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            margin-bottom: 1rem;
+        }
+
+        /* Export Controls */
+        .export-controls {
+            position: fixed;
+            top: 2rem;
+            right: 2rem;
+            z-index: 1000;
+            display: flex;
+            gap: 1rem;
+        }
+
+        .export-btn {
+            padding: 0.75rem 1.5rem;
+            background: var(--glass);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 50px;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .export-btn:hover {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            transform: scale(1.05);
+        }
+
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: var(--glass);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 1.5rem;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            animation: fadeInUp 0.8s ease-out forwards;
+            opacity: 0;
+            transform: perspective(1000px) rotateX(10deg);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card::after {
+            content: '';
+            position: absolute;
+            top: -100%;
+            left: -100%;
+            width: 300%;
+            height: 300%;
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
+            animation: rotate 15s linear infinite;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-10px) scale(1.05);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+            border-color: var(--primary);
+        }
+
+        @keyframes fadeInUp {
+            to {
+                opacity: 1;
+                transform: perspective(1000px) rotateX(0);
+            }
+        }
+
+        .stat-number {
+            font-size: 3rem;
+            font-weight: 800;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            position: relative;
+            z-index: 1;
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            opacity: 0.8;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .stat-change {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            background: rgba(16, 185, 129, 0.2);
+            border-radius: 20px;
+            font-size: 0.8rem;
+            margin-top: 0.5rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Chart Containers */
+        .charts-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .chart-container {
+            background: var(--glass);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 2rem;
+            animation: slideIn 1s ease-out;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .chart-container.full-width {
+            grid-column: 1 / -1;
+        }
+
+        @keyframes slideIn {
+            from { transform: translateX(-50px); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        .chart-container::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+            transform: rotate(45deg);
+            animation: shimmer 90s infinite;
+        }
+
+        @keyframes shimmer {
+            0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
+            100% { transform: translateX(100%) translateY(100%) rotate(45deg); }
+        }
+
+        .chart-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .icon {
+            width: 30px;
+            height: 30px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border-radius: 8px;
+        }
+
+        /* Interactive Elements */
+        .toggle-group {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+            position: relative;
+            z-index: 1;
+        }
+
+        .toggle-btn {
+            padding: 0.75rem 1.5rem;
+            background: var(--glass);
+            border: 1px solid var(--glass-border);
+            border-radius: 50px;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .toggle-btn::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            transition: width 0.5s, height 0.5s;
+            z-index: -1;
+        }
+
+        .toggle-btn:hover {
+            transform: scale(1.05);
+        }
+
+        .toggle-btn.active {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border-color: transparent;
+        }
+
+        .toggle-btn:not(.active):hover::before {
+            width: 150%;
+            height: 150%;
+        }
+
+        /* Progress Bars */
+        .progress-container {
+            margin: 1rem 0;
+            position: relative;
+            z-index: 1;
+        }
+
+        .progress-label {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+        }
+
+        .progress-bar {
+            height: 12px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            border-radius: 50px;
+            transition: width 1.5s ease-out;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .progress-fill::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            animation: progressShine 2s infinite;
+        }
+
+        @keyframes progressShine {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+
+        /* AI Readiness Calculator */
+        .calculator-container {
+            background: var(--glass);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .calculator-form {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .form-group {
+            position: relative;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 0.75rem;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+            color: white;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--primary);
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        .form-select {
+            width: 100%;
+            padding: 0.75rem;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+            color: white;
+            font-size: 1rem;
+            cursor: pointer;
+        }
+
+        .form-select option {
+            background: var(--dark);
+        }
+
+        .slider-container {
+            margin: 1rem 0;
+        }
+
+        .slider {
+            width: 100%;
+            -webkit-appearance: none;
+            appearance: none;
+            height: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 5px;
+            outline: none;
+            opacity: 0.9;
+            transition: opacity 0.2s;
+        }
+
+        .slider:hover {
+            opacity: 1;
+        }
+
+        .slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            cursor: pointer;
+            border-radius: 50%;
+        }
+
+        .slider::-moz-range-thumb {
+            width: 20px;
+            height: 20px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            cursor: pointer;
+            border-radius: 50%;
+        }
+
+        .calculate-btn {
+            padding: 1rem 2rem;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            border: none;
+            border-radius: 50px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 1rem;
+        }
+
+        .calculate-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 10px 30px rgba(99, 102, 241, 0.3);
+        }
+
+        .readiness-result {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            padding: 2rem;
+            text-align: center;
+            display: none;
+        }
+
+        .readiness-score {
+            font-size: 4rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 1rem;
+        }
+
+        .readiness-label {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .readiness-comparison {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        .comparison-item {
+            padding: 1rem;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+        }
+
+        /* 3D Globe Container */
+        #globe-container {
+            width: 100%;
+            height: 500px;
+            position: relative;
+            cursor: grab;
+        }
+
+        #globe-container:active {
+            cursor: grabbing;
+        }
+
+        .globe-tooltip {
+            position: absolute;
+            background: rgba(0, 0, 0, 0.9);
+            color: white;
+            padding: 0.75rem 1rem;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.3s;
+            z-index: 1000;
+            max-width: 200px;
+        }
+
+        .globe-tooltip.show {
+            opacity: 1;
+        }
+
+        /* Predictive Analytics */
+        .prediction-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .prediction-card {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            padding: 1.5rem;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .prediction-card:hover {
+            transform: translateY(-5px);
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .prediction-year {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .prediction-value {
+            font-size: 2.5rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .prediction-metric {
+            font-size: 0.9rem;
+            opacity: 0.8;
+            margin-top: 0.5rem;
+        }
+
+        /* Country Selection */
+        .country-selector {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            padding: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .country-tabs {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+            overflow-x: auto;
+            padding-bottom: 0.5rem;
+        }
+
+        .country-tab {
+            padding: 0.5rem 1rem;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            cursor: pointer;
+            white-space: nowrap;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+        }
+
+        .country-tab:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .country-tab.active {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+        }
+
+        /* Live Ticker */
+        .ticker-container {
+            background: var(--glass);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 15px;
+            padding: 1rem;
+            margin: 2rem 0;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .ticker-content {
+            display: flex;
+            animation: ticker 30s linear infinite;
+        }
+
+        @keyframes ticker {
+            0% { transform: translateX(100%); }
+            100% { transform: translateX(-100%); }
+        }
+
+        .ticker-item {
+            padding: 0 2rem;
+            white-space: nowrap;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .ticker-badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        /* Share Modal */
+        .share-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 2000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .share-modal.show {
+            display: flex;
+        }
+
+        .share-content {
+            background: var(--dark);
+            border-radius: 20px;
+            padding: 2rem;
+            max-width: 500px;
+            width: 90%;
+            text-align: center;
+        }
+
+        .share-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            margin-top: 1.5rem;
+        }
+
+        .share-btn {
+            padding: 0.75rem 1.5rem;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .share-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: scale(1.05);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            h1 { font-size: 2rem; }
+            .charts-grid { grid-template-columns: 1fr; }
+            .stat-number { font-size: 2rem; }
+            .cta-title { font-size: 1.5rem; }
+            .export-controls { position: static; margin-bottom: 1rem; }
+            #globe-container { height: 300px; }
+            .prediction-grid { grid-template-columns: repeat(2, 1fr); }
+        }
+    </style>
+</head>
+<body>
+    <!-- Animated Background -->
+    <div class="bg-animation">
+        <div class="floating-bubble" style="width: 300px; height: 300px; top: 10%; left: 10%;"></div>
+        <div class="floating-bubble" style="width: 200px; height: 200px; top: 60%; right: 10%; animation-delay: -5s;"></div>
+        <div class="floating-bubble" style="width: 150px; height: 150px; bottom: 10%; left: 30%; animation-delay: -10s;"></div>
+        
+        <!-- Neural Network Lines -->
+        <div class="neural-network">
+            <div class="neural-line" style="width: 200px; top: 20%; left: 10%; transform: rotate(45deg);"></div>
+            <div class="neural-line" style="width: 150px; top: 40%; right: 20%; transform: rotate(-30deg); animation-delay: 1s;"></div>
+            <div class="neural-line" style="width: 180px; bottom: 30%; left: 30%; transform: rotate(60deg); animation-delay: 2s;"></div>
+        </div>
+    </div>
+
+    <!-- Export Controls -->
+    <div class="export-controls">
+        <button class="export-btn" onclick="exportToPDF()">
+            📄 Export PDF
+        </button>
+        <button class="export-btn" onclick="exportToImage()">
+            🖼️ Save Image
+        </button>
+        <button class="export-btn" onclick="shareResults()">
+            🔗 Share
+        </button>
+    </div>
+
+    <!-- Share Modal -->
+    <div class="share-modal" id="shareModal">
+        <div class="share-content">
+            <h3>Share Dashboard</h3>
+            <p>Share these insights with your network</p>
+            <div class="share-buttons">
+                <div class="share-btn" onclick="shareToTwitter()">🐦 Twitter</div>
+                <div class="share-btn" onclick="shareToLinkedIn()">💼 LinkedIn</div>
+                <div class="share-btn" onclick="copyLink()">📋 Copy Link</div>
+            </div>
+            <button class="toggle-btn" style="margin-top: 1rem;" onclick="closeShareModal()">Close</button>
+        </div>
+    </div>
+
+    <div class="container" id="dashboard-content">
+        <!-- Top CTA -->
+        <div class="cta-banner">
+            <div class="cta-content">
+                <div class="cta-title">🪞 Entdecke deine KI-Persönlichkeit</div>
+                <div class="cta-subtitle">Wie stehst du zu KI? Finde es heraus mit unserer interaktiven App!</div>
+                <a href="https://theaimirror.app" class="cta-button">The AI Mirror App starten →</a>
+            </div>
+        </div>
+
+        <!-- Header -->
+        <div class="header">
+            <h1>Global AI Trust & Adoption Dashboard 2025</h1>
+            <div class="subtitle">Insights from 48,340 people across 47 countries</div>
+            <div style="opacity: 0.7; font-size: 0.9rem;">University of Melbourne & KPMG International Study</div>
+        </div>
+
+        <!-- Live Ticker -->
+        <div class="ticker-container">
+            <div class="ticker-content">
+                <div class="ticker-item">
+                    <span class="ticker-badge">BREAKING</span>
+                    <span>92% der Befragten in Indien nutzen KI regelmäßig</span>
+                </div>
+                <div class="ticker-item">
+                    <span class="ticker-badge">TREND</span>
+                    <span>Vertrauen in KI sinkt trotz steigender Nutzung</span>
+                </div>
+                <div class="ticker-item">
+                    <span class="ticker-badge">ALERT</span>
+                    <span>48% haben sensible Daten in öffentliche KI-Tools hochgeladen</span>
+                </div>
+                <div class="ticker-item">
+                    <span class="ticker-badge">UPDATE</span>
+                    <span>87% fordern Gesetze gegen KI-generierte Fehlinformationen</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Key Stats -->
+        <div class="stats-grid">
+            <div class="stat-card" style="animation-delay: 0.1s;">
+                <div class="stat-number" id="stat1">0%</div>
+                <div class="stat-label">Regular AI Users</div>
+                <div class="stat-change">📈 +13% since 2022</div>
+            </div>
+            <div class="stat-card" style="animation-delay: 0.2s;">
+                <div class="stat-number" id="stat2">0%</div>
+                <div class="stat-label">Trust AI Systems</div>
+                <div class="stat-change">📉 -8% since 2022</div>
+            </div>
+            <div class="stat-card" style="animation-delay: 0.3s;">
+                <div class="stat-number" id="stat3">0%</div>
+                <div class="stat-label">Want AI Regulation</div>
+                <div class="stat-change">🔒 Strong mandate</div>
+            </div>
+            <div class="stat-card" style="animation-delay: 0.4s;">
+                <div class="stat-number" id="stat4">0%</div>
+                <div class="stat-label">Students Using AI</div>
+                <div class="stat-change">🎓 Daily usage: 51%</div>
+            </div>
+        </div>
+
+        <!-- AI Readiness Calculator -->
+        <div class="calculator-container">
+            <h3 class="chart-title">
+                <span class="icon">🧮</span>
+                AI Readiness Calculator
+            </h3>
+            <div class="calculator-form">
+                <div class="form-group">
+                    <label class="form-label">Your Country</label>
+                    <select class="form-select" id="calcCountry">
+                        <option value="advanced">Advanced Economy</option>
+                        <option value="emerging">Emerging Economy</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">AI Usage Frequency</label>
+                    <select class="form-select" id="calcUsage">
+                        <option value="0">Never</option>
+                        <option value="20">Rarely</option>
+                        <option value="40">Monthly</option>
+                        <option value="60">Weekly</option>
+                        <option value="80">Daily</option>
+                        <option value="100">Multiple times daily</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">AI Knowledge Level (0-10)</label>
+                    <div class="slider-container">
+                        <input type="range" min="0" max="10" value="5" class="slider" id="calcKnowledge">
+                        <div style="text-align: center; margin-top: 0.5rem;">
+                            <span id="knowledgeValue">5</span>/10
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Trust in AI (0-10)</label>
+                    <div class="slider-container">
+                        <input type="range" min="0" max="10" value="5" class="slider" id="calcTrust">
+                        <div style="text-align: center; margin-top: 0.5rem;">
+                            <span id="trustValue">5</span>/10
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">AI Training</label>
+                    <select class="form-select" id="calcTraining">
+                        <option value="0">No training</option>
+                        <option value="50">Basic training</option>
+                        <option value="100">Professional training</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Age Group</label>
+                    <select class="form-select" id="calcAge">
+                        <option value="100">18-34</option>
+                        <option value="70">35-54</option>
+                        <option value="40">55+</option>
+                    </select>
+                </div>
+            </div>
+            <button class="calculate-btn" onclick="calculateReadiness()">Calculate My AI Readiness Score</button>
+            
+            <div class="readiness-result" id="readinessResult">
+                <div class="readiness-score" id="readinessScore">0</div>
+                <div class="readiness-label" id="readinessLabel">Your AI Readiness</div>
+                <div class="readiness-comparison">
+                    <div class="comparison-item">
+                        <div style="font-size: 1.5rem; font-weight: 700; color: var(--primary);">66%</div>
+                        <div style="font-size: 0.9rem; opacity: 0.8;">Global Average</div>
+                    </div>
+                    <div class="comparison-item">
+                        <div style="font-size: 1.5rem; font-weight: 700; color: var(--accent);" id="economyAvg">58%</div>
+                        <div style="font-size: 0.9rem; opacity: 0.8;">Your Economy Avg</div>
+                    </div>
+                    <div class="comparison-item">
+                        <div style="font-size: 1.5rem; font-weight: 700; color: var(--secondary);" id="percentile">50th</div>
+                        <div style="font-size: 0.9rem; opacity: 0.8;">Percentile</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 3D Globe Visualization -->
+        <div class="chart-container full-width">
+            <h3 class="chart-title">
+                <span class="icon">🌍</span>
+                Interactive 3D Globe - AI Adoption Heatmap
+            </h3>
+            <div id="globe-container"></div>
+            <div class="globe-tooltip" id="globeTooltip"></div>
+        </div>
+
+        <!-- Charts Grid -->
+        <div class="charts-grid">
+            <!-- Top Countries with Selector -->
+            <div class="chart-container">
+                <h3 class="chart-title">
+                    <span class="icon">🏆</span>
+                    Country Rankings by AI Usage
+                </h3>
+                <div class="country-selector">
+                    <div class="country-tabs">
+                        <div class="country-tab active" onclick="showCountryRange('top15')">Top 1-15</div>
+                        <div class="country-tab" onclick="showCountryRange('mid15')">Top 16-30</div>
+                        <div class="country-tab" onclick="showCountryRange('bottom17')">Top 31-47</div>
+                    </div>
+                </div>
+                <div id="topCountries"></div>
+            </div>
+
+            <!-- Regional Comparison -->
+            <div class="chart-container">
+                <h3 class="chart-title">
+                    <span class="icon">📊</span>
+                    Regional AI Adoption & Trust
+                </h3>
+                <canvas id="regionalChart"></canvas>
+            </div>
+
+            <!-- Workplace Impact -->
+            <div class="chart-container">
+                <h3 class="chart-title">
+                    <span class="icon">💼</span>
+                    AI Impact at Work
+                </h3>
+                <canvas id="workplaceChart"></canvas>
+            </div>
+
+            <!-- Demographics -->
+            <div class="chart-container">
+                <h3 class="chart-title">
+                    <span class="icon">👥</span>
+                    Usage by Demographics
+                </h3>
+                <div class="toggle-group">
+                    <button class="toggle-btn active" onclick="updateDemoChart('age')">Age</button>
+                    <button class="toggle-btn" onclick="updateDemoChart('education')">Education</button>
+                    <button class="toggle-btn" onclick="updateDemoChart('income')">Income</button>
+                </div>
+                <canvas id="demoChart"></canvas>
+            </div>
+        </div>
+
+        <!-- Predictive Analytics Section -->
+        <div class="chart-container full-width">
+            <h3 class="chart-title">
+                <span class="icon">🔮</span>
+                AI Adoption Predictions 2026-2030
+            </h3>
+            <canvas id="predictionChart"></canvas>
+            <div class="prediction-grid">
+                <div class="prediction-card">
+                    <div class="prediction-year">2026</div>
+                    <div class="prediction-value">75%</div>
+                    <div class="prediction-metric">Global AI Usage</div>
+                </div>
+                <div class="prediction-card">
+                    <div class="prediction-year">2027</div>
+                    <div class="prediction-value">82%</div>
+                    <div class="prediction-metric">Global AI Usage</div>
+                </div>
+                <div class="prediction-card">
+                    <div class="prediction-year">2028</div>
+                    <div class="prediction-value">87%</div>
+                    <div class="prediction-metric">Global AI Usage</div>
+                </div>
+                <div class="prediction-card">
+                    <div class="prediction-year">2029</div>
+                    <div class="prediction-value">91%</div>
+                    <div class="prediction-metric">Global AI Usage</div>
+                </div>
+                <div class="prediction-card">
+                    <div class="prediction-year">2030</div>
+                    <div class="prediction-value">94%</div>
+                    <div class="prediction-metric">Global AI Usage</div>
+                </div>
+            </div>
+            <div style="margin-top: 2rem; padding: 1rem; background: rgba(255, 255, 255, 0.05); border-radius: 10px;">
+                <p style="font-size: 0.9rem; opacity: 0.9;">
+                    📈 <strong>Prediction Model:</strong> Based on current growth rates (13% increase from 2022-2024), 
+                    emerging economy adoption patterns, and exponential technology adoption curves. 
+                    The model predicts near-universal AI adoption by 2030, with emerging economies reaching 
+                    saturation (>95%) by 2028 and advanced economies following by 2030.
+                </p>
+            </div>
+        </div>
+
+        <!-- Bottom CTA -->
+        <div class="cta-banner" style="margin-top: 3rem;">
+            <div class="cta-content">
+                <div class="cta-title">🚀 Bereit für deine KI-Reise?</div>
+                <div class="cta-subtitle">
+                    Vergleiche deine Einstellung zu KI mit 48.000+ Menschen weltweit.<br>
+                    Erhalte personalisierte Insights und entdecke deinen KI-Archetyp!
+                </div>
+                <a href="https://theaimirror.app" class="cta-button">Jetzt The AI Mirror App testen →</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Initialize GSAP animations
+        gsap.from(".stat-card", {
+            y: 50,
+            opacity: 0,
+            duration: 1,
+            stagger: 0.2,
+            ease: "power3.out"
+        });
+
+        // CountUp animations for stats
+        window.addEventListener('load', () => {
+            const countUp1 = new countUp.CountUp('stat1', 66, { suffix: '%', duration: 2 });
+            const countUp2 = new countUp.CountUp('stat2', 46, { suffix: '%', duration: 2 });
+            const countUp3 = new countUp.CountUp('stat3', 70, { suffix: '%', duration: 2 });
+            const countUp4 = new countUp.CountUp('stat4', 83, { suffix: '%', duration: 2 });
+            
+            countUp1.start();
+            countUp2.start();
+            countUp3.start();
+            countUp4.start();
+        });
+
+        // AI Readiness Calculator
+        document.getElementById('calcKnowledge').addEventListener('input', function() {
+            document.getElementById('knowledgeValue').textContent = this.value;
+        });
+
+        document.getElementById('calcTrust').addEventListener('input', function() {
+            document.getElementById('trustValue').textContent = this.value;
+        });
+
+        function calculateReadiness() {
+            const country = document.getElementById('calcCountry').value;
+            const usage = parseInt(document.getElementById('calcUsage').value);
+            const knowledge = parseInt(document.getElementById('calcKnowledge').value) * 10;
+            const trust = parseInt(document.getElementById('calcTrust').value) * 10;
+            const training = parseInt(document.getElementById('calcTraining').value);
+            const age = parseInt(document.getElementById('calcAge').value);
+            
+            // Calculate weighted score
+            let score = (usage * 0.25 + knowledge * 0.2 + trust * 0.2 + training * 0.15 + age * 0.2);
+            
+            // Adjust for economy type
+            if (country === 'emerging') {
+                score = Math.min(100, score * 1.15);
+            } else {
+                score = score * 0.9;
+            }
+            
+            score = Math.round(score);
+            
+            // Update display
+            document.getElementById('readinessScore').textContent = score + '%';
+            
+            let label = '';
+            if (score < 30) label = 'AI Beginner';
+            else if (score < 50) label = 'AI Explorer';
+            else if (score < 70) label = 'AI Practitioner';
+            else if (score < 90) label = 'AI Advanced';
+            else label = 'AI Expert';
+            
+            document.getElementById('readinessLabel').textContent = label;
+            
+            // Update comparisons
+            document.getElementById('economyAvg').textContent = country === 'emerging' ? '80%' : '58%';
+            
+            let percentile = '';
+            if (score < 46) percentile = 'Below 50th';
+            else if (score < 66) percentile = '50th-75th';
+            else if (score < 80) percentile = '75th-90th';
+            else percentile = 'Top 10%';
+            
+            document.getElementById('percentile').textContent = percentile;
+            
+            // Show result
+            document.getElementById('readinessResult').style.display = 'block';
+            
+            // Animate score
+            const scoreElement = document.getElementById('readinessScore');
+            const countUp = new countUp.CountUp('readinessScore', score, { suffix: '%', duration: 2 });
+            countUp.start();
+        }
+
+        // 3D Globe Visualization
+        function initGlobe() {
+            const container = document.getElementById('globe-container');
+            const width = container.clientWidth;
+            const height = container.clientHeight;
+
+            // Scene setup
+            const scene = new THREE.Scene();
+            const camera = new THREE.PerspectiveCamera(45, width / height, 0.1, 1000);
+            const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+            renderer.setSize(width, height);
+            container.appendChild(renderer.domElement);
+
+            // Create globe
+            const geometry = new THREE.SphereGeometry(5, 64, 64);
+            const texture = new THREE.TextureLoader().load('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChwGA60e6kgAAAABJRU5ErkJggg==');
+            const material = new THREE.MeshPhongMaterial({
+                map: texture,
+                color: 0x6366f1,
+                emissive: 0x6366f1,
+                emissiveIntensity: 0.1,
+                shininess: 0.7,
+            });
+
+            const globe = new THREE.Mesh(geometry, material);
+            scene.add(globe);
+
+            // Add atmosphere
+            const atmosphereGeometry = new THREE.SphereGeometry(5.3, 64, 64);
+            const atmosphereMaterial = new THREE.MeshPhongMaterial({
+                color: 0x6366f1,
+                transparent: true,
+                opacity: 0.1,
+                side: THREE.BackSide
+            });
+            const atmosphere = new THREE.Mesh(atmosphereGeometry, atmosphereMaterial);
+            scene.add(atmosphere);
+
+            // Lighting
+            const ambientLight = new THREE.AmbientLight(0xffffff, 0.4);
+            scene.add(ambientLight);
+            const pointLight = new THREE.PointLight(0xffffff, 1);
+            pointLight.position.set(10, 10, 10);
+            scene.add(pointLight);
+
+            // Camera position
+            camera.position.z = 15;
+
+            // Add country data points
+            const countryData = [
+                { lat: 20, lon: 77, value: 92, name: 'India' },
+                { lat: 9, lon: 8, value: 92, name: 'Nigeria' },
+                { lat: 24, lon: 54, value: 91, name: 'UAE' },
+                { lat: 26, lon: 30, value: 90, name: 'Egypt' },
+                { lat: 35, lon: 105, value: 89, name: 'China' },
+                { lat: 52, lon: 5, value: 43, name: 'Netherlands' },
+            ];
+
+            countryData.forEach(country => {
+                const phi = (90 - country.lat) * Math.PI / 180;
+                const theta = (country.lon + 180) * Math.PI / 180;
+                
+                const x = -5 * Math.sin(phi) * Math.cos(theta);
+                const y = 5 * Math.cos(phi);
+                const z = 5 * Math.sin(phi) * Math.sin(theta);
+
+                const dotGeometry = new THREE.SphereGeometry(0.1, 8, 8);
+                const color = country.value > 70 ? 0x10b981 : country.value > 50 ? 0xf59e0b : 0xef4444;
+                const dotMaterial = new THREE.MeshBasicMaterial({ color: color });
+                const dot = new THREE.Mesh(dotGeometry, dotMaterial);
+                dot.position.set(x, y, z);
+                globe.add(dot);
+            });
+
+            // Animation
+            let mouseX = 0;
+            let mouseY = 0;
+
+            container.addEventListener('mousemove', (event) => {
+                const rect = container.getBoundingClientRect();
+                mouseX = ((event.clientX - rect.left) / width) * 2 - 1;
+                mouseY = -((event.clientY - rect.top) / height) * 2 + 1;
+            });
+
+            function animate() {
+                requestAnimationFrame(animate);
+                
+                globe.rotation.y += 0.002;
+                atmosphere.rotation.y += 0.003;
+                
+                // Mouse interaction
+                globe.rotation.x = mouseY * 0.5;
+                globe.rotation.y += mouseX * 0.01;
+                
+                renderer.render(scene, camera);
+            }
+
+            animate();
+
+            // Resize handler
+            window.addEventListener('resize', () => {
+                const newWidth = container.clientWidth;
+                const newHeight = container.clientHeight;
+                camera.aspect = newWidth / newHeight;
+                camera.updateProjectionMatrix();
+                renderer.setSize(newWidth, newHeight);
+            });
+        }
+
+        // Initialize globe after page load
+        setTimeout(initGlobe, 100);
+
+        // Chart configurations
+        Chart.defaults.color = '#fff';
+        Chart.defaults.borderColor = 'rgba(255, 255, 255, 0.1)';
+        Chart.defaults.font.family = 'Inter, sans-serif';
+
+        // All Countries Data
+        const allCountriesData = [
+            { country: 'India 🇮🇳', usage: 92 },
+            { country: 'Nigeria 🇳🇬', usage: 92 },
+            { country: 'UAE 🇦🇪', usage: 91 },
+            { country: 'Egypt 🇪🇬', usage: 90 },
+            { country: 'China 🇨🇳', usage: 89 },
+            { country: 'Saudi Arabia 🇸🇦', usage: 88 },
+            { country: 'Costa Rica 🇨🇷', usage: 87 },
+            { country: 'South Africa 🇿🇦', usage: 83 },
+            { country: 'Brazil 🇧🇷', usage: 82 },
+            { country: 'Türkiye 🇹🇷', usage: 81 },
+            { country: 'Mexico 🇲🇽', usage: 77 },
+            { country: 'Argentina 🇦🇷', usage: 75 },
+            { country: 'Colombia 🇨🇴', usage: 74 },
+            { country: 'Singapore 🇸🇬', usage: 73 },
+            { country: 'Chile 🇨🇱', usage: 72 },
+            { country: 'Latvia 🇱🇻', usage: 72 },
+            { country: 'Norway 🇳🇴', usage: 71 },
+            { country: 'Estonia 🇪🇪', usage: 70 },
+            { country: 'Lithuania 🇱🇹', usage: 69 },
+            { country: 'Poland 🇵🇱', usage: 69 },
+            { country: 'Israel 🇮🇱', usage: 68 },
+            { country: 'Slovenia 🇸🇮', usage: 66 },
+            { country: 'Switzerland 🇨🇭', usage: 65 },
+            { country: 'Portugal 🇵🇹', usage: 63 },
+            { country: 'Romania 🇷🇴', usage: 62 },
+            { country: 'Greece 🇬🇷', usage: 61 },
+            { country: 'Korea 🇰🇷', usage: 61 },
+            { country: 'Italy 🇮🇹', usage: 60 },
+            { country: 'Spain 🇪🇸', usage: 60 },
+            { country: 'Denmark 🇩🇰', usage: 57 },
+            { country: 'Ireland 🇮🇪', usage: 56 },
+            { country: 'Finland 🇫🇮', usage: 55 },
+            { country: 'Austria 🇦🇹', usage: 53 },
+            { country: 'Slovakia 🇸🇰', usage: 53 },
+            { country: 'USA 🇺🇸', usage: 53 },
+            { country: 'UK 🇬🇧', usage: 52 },
+            { country: 'France 🇫🇷', usage: 51 },
+            { country: 'Germany 🇩🇪', usage: 51 },
+            { country: 'Australia 🇦🇺', usage: 50 },
+            { country: 'Canada 🇨🇦', usage: 50 },
+            { country: 'Hungary 🇭🇺', usage: 50 },
+            { country: 'Japan 🇯🇵', usage: 50 },
+            { country: 'New Zealand 🇳🇿', usage: 50 },
+            { country: 'Czech Rep. 🇨🇿', usage: 49 },
+            { country: 'Sweden 🇸🇪', usage: 49 },
+            { country: 'Belgium 🇧🇪', usage: 47 },
+            { country: 'Netherlands 🇳🇱', usage: 43 }
+        ];
+
+        // Function to show country ranges
+        function showCountryRange(range) {
+            // Update tab states
+            document.querySelectorAll('.country-tab').forEach(tab => tab.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            let countriesToShow = [];
+            if (range === 'top15') {
+                countriesToShow = allCountriesData.slice(0, 15);
+            } else if (range === 'mid15') {
+                countriesToShow = allCountriesData.slice(15, 30);
+            } else {
+                countriesToShow = allCountriesData.slice(30);
+            }
+            
+            // Clear and rebuild progress bars
+            const topCountriesContainer = document.getElementById('topCountries');
+            topCountriesContainer.innerHTML = '';
+            
+            countriesToShow.forEach((item, index) => {
+                const progressHtml = `
+                    <div class="progress-container" style="animation: fadeInUp 0.5s ease-out ${index * 0.05}s forwards; opacity: 0;">
+                        <div class="progress-label">
+                            <span>${item.country}</span>
+                            <span>${item.usage}%</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 0%;" data-width="${item.usage}%"></div>
+                        </div>
+                    </div>
+                `;
+                topCountriesContainer.innerHTML += progressHtml;
+            });
+            
+            // Animate progress bars
+            setTimeout(() => {
+                document.querySelectorAll('.progress-fill').forEach(bar => {
+                    bar.style.width = bar.dataset.width;
+                });
+            }, 100);
+        }
+
+        // Initialize with top 15
+        showCountryRange('top15');
+
+        // Regional Comparison Chart
+        const regionalCtx = document.getElementById('regionalChart').getContext('2d');
+        const regionalChart = new Chart(regionalCtx, {
+            type: 'radar',
+            data: {
+                labels: ['Usage', 'Trust', 'AI Knowledge', 'Benefits Expected', 'Regulation Support'],
+                datasets: [{
+                    label: 'Emerging Economies',
+                    data: [80, 57, 64, 90, 68],
+                    borderColor: '#ec4899',
+                    backgroundColor: 'rgba(236, 72, 153, 0.2)',
+                    borderWidth: 3,
+                    pointBackgroundColor: '#ec4899',
+                    pointBorderColor: '#fff',
+                    pointHoverBackgroundColor: '#fff',
+                    pointHoverBorderColor: '#ec4899'
+                }, {
+                    label: 'Advanced Economies',
+                    data: [58, 39, 46, 79, 71],
+                    borderColor: '#6366f1',
+                    backgroundColor: 'rgba(99, 102, 241, 0.2)',
+                    borderWidth: 3,
+                    pointBackgroundColor: '#6366f1',
+                    pointBorderColor: '#fff',
+                    pointHoverBackgroundColor: '#fff',
+                    pointHoverBorderColor: '#6366f1'
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: {
+                            padding: 20,
+                            font: { size: 12 }
+                        }
+                    }
+                },
+                scales: {
+                    r: {
+                        beginAtZero: true,
+                        max: 100,
+                        ticks: {
+                            stepSize: 20,
+                            backdropColor: 'transparent'
+                        },
+                        grid: {
+                            color: 'rgba(255, 255, 255, 0.1)'
+                        },
+                        angleLines: {
+                            color: 'rgba(255, 255, 255, 0.1)'
+                        }
+                    }
+                }
+            }
+        });
+
+        // Workplace Impact Chart
+        const workplaceCtx = document.getElementById('workplaceChart').getContext('2d');
+        const workplaceChart = new Chart(workplaceCtx, {
+            type: 'bar',
+            data: {
+                labels: ['Efficiency', 'Innovation', 'Quality', 'Skills', 'Revenue'],
+                datasets: [{
+                    label: 'Positive Impact',
+                    data: [67, 59, 58, 55, 46],
+                    backgroundColor: 'rgba(16, 185, 129, 0.8)',
+                    borderColor: '#10b981',
+                    borderWidth: 2
+                }, {
+                    label: 'Negative Impact',
+                    data: [-9, -12, -10, -13, -10],
+                    backgroundColor: 'rgba(239, 68, 68, 0.8)',
+                    borderColor: '#ef4444',
+                    borderWidth: 2
+                }]
+            },
+            options: {
+                responsive: true,
+                indexAxis: 'y',
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: {
+                            padding: 20,
+                            font: { size: 12 }
+                        }
+                    }
+                },
+                scales: {
+                    x: {
+                        stacked: true,
+                        grid: {
+                            color: 'rgba(255, 255, 255, 0.1)'
+                        }
+                    },
+                    y: {
+                        stacked: true,
+                        grid: {
+                            color: 'rgba(255, 255, 255, 0.1)'
+                        }
+                    }
+                }
+            }
+        });
+
+        // Demographics Chart
+        let demoChart;
+        const demoCtx = document.getElementById('demoChart').getContext('2d');
+
+        const demoData = {
+            age: {
+                labels: ['18-34', '35-54', '55+'],
+                data: [84, 69, 50]
+            },
+            education: {
+                labels: ['No University', 'University Degree', 'Postgraduate'],
+                data: [44, 72, 83]
+            },
+            income: {
+                labels: ['Low', 'Middle', 'High'],
+                data: [34, 66, 82]
+            }
+        };
+
+        function updateDemoChart(type) {
+            // Update button states
+            document.querySelectorAll('.toggle-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+
+            if (demoChart) {
+                demoChart.destroy();
+            }
+
+            demoChart = new Chart(demoCtx, {
+                type: 'line',
+                data: {
+                    labels: demoData[type].labels,
+                    datasets: [{
+                        label: 'AI Usage %',
+                        data: demoData[type].data,
+                        borderColor: '#6366f1',
+                        backgroundColor: 'rgba(99, 102, 241, 0.2)',
+                        borderWidth: 3,
+                        tension: 0.4,
+                        fill: true,
+                        pointBackgroundColor: '#6366f1',
+                        pointBorderColor: '#fff',
+                        pointBorderWidth: 2,
+                        pointRadius: 6,
+                        pointHoverRadius: 8
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            max: 100,
+                            grid: {
+                                color: 'rgba(255, 255, 255, 0.1)'
+                            }
+                        },
+                        x: {
+                            grid: {
+                                color: 'rgba(255, 255, 255, 0.1)'
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // Initialize demographics chart with age data
+        setTimeout(() => {
+            updateDemoChart('age');
+        }, 100);
+
+        // Predictive Analytics Chart
+        const predictionCtx = document.getElementById('predictionChart').getContext('2d');
+        const predictionChart = new Chart(predictionCtx, {
+            type: 'line',
+            data: {
+                labels: ['2022', '2024', '2026', '2028', '2030'],
+                datasets: [{
+                    label: 'Global Average',
+                    data: [54, 66, 75, 87, 94],
+                    borderColor: '#6366f1',
+                    backgroundColor: 'rgba(99, 102, 241, 0.1)',
+                    borderWidth: 3,
+                    tension: 0.4,
+                    fill: true
+                }, {
+                    label: 'Emerging Economies',
+                    data: [67, 80, 88, 95, 98],
+                    borderColor: '#ec4899',
+                    backgroundColor: 'rgba(236, 72, 153, 0.1)',
+                    borderWidth: 3,
+                    tension: 0.4,
+                    fill: true
+                }, {
+                    label: 'Advanced Economies',
+                    data: [45, 58, 68, 82, 91],
+                    borderColor: '#14b8a6',
+                    backgroundColor: 'rgba(20, 184, 166, 0.1)',
+                    borderWidth: 3,
+                    tension: 0.4,
+                    fill: true
+                }]
+            },
+            options: {
+                responsive: true,
+                interaction: {
+                    mode: 'index',
+                    intersect: false
+                },
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: {
+                            padding: 20,
+                            font: { size: 12 }
+                        }
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                return context.dataset.label + ': ' + context.parsed.y + '%';
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        max: 100,
+                        grid: {
+                            color: 'rgba(255, 255, 255, 0.1)'
+                        },
+                        title: {
+                            display: true,
+                            text: 'AI Usage Rate (%)',
+                            color: 'rgba(255, 255, 255, 0.8)'
+                        }
+                    },
+                    x: {
+                        grid: {
+                            color: 'rgba(255, 255, 255, 0.1)'
+                        },
+                        title: {
+                            display: true,
+                            text: 'Year',
+                            color: 'rgba(255, 255, 255, 0.8)'
+                        }
+                    }
+                }
+            }
+        });
+
+        // Export Functions
+        function exportToPDF() {
+            const { jsPDF } = window.jspdf;
+            const pdf = new jsPDF('l', 'mm', 'a4');
+            
+            html2canvas(document.getElementById('dashboard-content')).then(canvas => {
+                const imgData = canvas.toDataURL('image/png');
+                const imgWidth = 297;
+                const pageHeight = 210;
+                const imgHeight = canvas.height * imgWidth / canvas.width;
+                let heightLeft = imgHeight;
+                let position = 0;
+
+                pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+                heightLeft -= pageHeight;
+
+                while (heightLeft >= 0) {
+                    position = heightLeft - imgHeight;
+                    pdf.addPage();
+                    pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+                    heightLeft -= pageHeight;
+                }
+
+                pdf.save('AI-Trust-Dashboard-2025.pdf');
+            });
+        }
+
+        function exportToImage() {
+            html2canvas(document.getElementById('dashboard-content')).then(canvas => {
+                const link = document.createElement('a');
+                link.download = 'AI-Trust-Dashboard-2025.png';
+                link.href = canvas.toDataURL();
+                link.click();
+            });
+        }
+
+        function shareResults() {
+            document.getElementById('shareModal').classList.add('show');
+        }
+
+        function closeShareModal() {
+            document.getElementById('shareModal').classList.remove('show');
+        }
+
+        function shareToTwitter() {
+            const text = 'Check out these insights from the Global AI Trust & Adoption Study 2025! 🤖 #AI #Technology';
+            const url = 'https://theaimirror.app';
+            window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`, '_blank');
+        }
+
+        function shareToLinkedIn() {
+            const url = 'https://theaimirror.app';
+            window.open(`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}`, '_blank');
+        }
+
+        function copyLink() {
+            navigator.clipboard.writeText('https://theaimirror.app');
+            alert('Link copied to clipboard!');
+        }
+
+        // Add parallax effect on scroll
+        window.addEventListener('scroll', () => {
+            const scrolled = window.pageYOffset;
+            const parallax = document.querySelector('.bg-animation');
+            parallax.style.transform = `translateY(${scrolled * 0.5}px)`;
+        });
+    </script>
+</body>
+</html>
