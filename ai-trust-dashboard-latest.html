@@ -1095,9 +1095,9 @@
                     Usage by Demographics
                 </h3>
                 <div class="toggle-group">
-                    <button class="toggle-btn active" onclick="updateDemoChart('age')">Age</button>
-                    <button class="toggle-btn" onclick="updateDemoChart('education')">Education</button>
-                    <button class="toggle-btn" onclick="updateDemoChart('income')">Income</button>
+                    <button class="toggle-btn active" onclick="updateDemoChart('age', event)">Age</button>
+                    <button class="toggle-btn" onclick="updateDemoChart('education', event)">Education</button>
+                    <button class="toggle-btn" onclick="updateDemoChart('income', event)">Income</button>
                 </div>
                 <canvas id="demoChart"></canvas>
             </div>
@@ -1583,10 +1583,14 @@
             }
         };
 
-        function updateDemoChart(type) {
+        function updateDemoChart(type, evt) {
             // Update button states
             document.querySelectorAll('.toggle-btn').forEach(btn => btn.classList.remove('active'));
-            event.target.classList.add('active');
+            if (evt && evt.target) {
+                evt.target.classList.add('active');
+            } else {
+                document.querySelector('.toggle-group .toggle-btn').classList.add('active');
+            }
 
             if (demoChart) {
                 demoChart.destroy();
@@ -1638,7 +1642,7 @@
 
         // Initialize demographics chart with age data
         setTimeout(() => {
-            updateDemoChart('age');
+            updateDemoChart('age', null);
         }, 100);
 
         // Predictive Analytics Chart
