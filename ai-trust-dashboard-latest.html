@@ -1062,9 +1062,9 @@
                 </h3>
                 <div class="country-selector">
                     <div class="country-tabs">
-                        <div class="country-tab active" onclick="showCountryRange('top15')">Top 1-15</div>
-                        <div class="country-tab" onclick="showCountryRange('mid15')">Top 16-30</div>
-                        <div class="country-tab" onclick="showCountryRange('bottom17')">Top 31-47</div>
+                        <div class="country-tab active" onclick="showCountryRange('top15', event)">Top 1-15</div>
+                        <div class="country-tab" onclick="showCountryRange('mid15', event)">Top 16-30</div>
+                        <div class="country-tab" onclick="showCountryRange('bottom17', event)">Top 31-47</div>
                     </div>
                 </div>
                 <div id="topCountries"></div>
@@ -1413,10 +1413,14 @@
         ];
 
         // Function to show country ranges
-        function showCountryRange(range) {
+        function showCountryRange(range, evt) {
             // Update tab states
             document.querySelectorAll('.country-tab').forEach(tab => tab.classList.remove('active'));
-            event.target.classList.add('active');
+            if (evt && evt.target) {
+                evt.target.classList.add('active');
+            } else {
+                document.querySelector('.country-tab').classList.add('active');
+            }
             
             let countriesToShow = [];
             if (range === 'top15') {
@@ -1455,7 +1459,7 @@
         }
 
         // Initialize with top 15
-        showCountryRange('top15');
+        showCountryRange('top15', null);
 
         // Regional Comparison Chart
         const regionalCtx = document.getElementById('regionalChart').getContext('2d');
