@@ -1249,6 +1249,7 @@
             const container = document.getElementById('globe-container');
             const width = container.clientWidth;
             const height = container.clientHeight;
+            const tooltip = document.getElementById('globeTooltip');
 
             // Scene setup
             const scene = new THREE.Scene();
@@ -1292,52 +1293,124 @@
             // Camera position
             camera.position.z = 15;
 
-            // Add country data points
-            const countryData = [
-                { lat: 20, lon: 77, value: 92, name: 'India' },
-                { lat: 9, lon: 8, value: 92, name: 'Nigeria' },
-                { lat: 24, lon: 54, value: 91, name: 'UAE' },
-                { lat: 26, lon: 30, value: 90, name: 'Egypt' },
-                { lat: 35, lon: 105, value: 89, name: 'China' },
-                { lat: 52, lon: 5, value: 43, name: 'Netherlands' },
-            ];
+            // Coordinate lookup for countries
+            const countryCoordinates = {
+                'India': { lat: 20.5937, lon: 78.9629 },
+                'Nigeria': { lat: 9.082, lon: 8.6753 },
+                'UAE': { lat: 23.4241, lon: 53.8478 },
+                'Egypt': { lat: 26.8206, lon: 30.8025 },
+                'China': { lat: 35.8617, lon: 104.1954 },
+                'Saudi Arabia': { lat: 23.8859, lon: 45.0792 },
+                'Costa Rica': { lat: 9.7489, lon: -83.7534 },
+                'South Africa': { lat: -30.5595, lon: 22.9375 },
+                'Brazil': { lat: -14.235, lon: -51.9253 },
+                'Türkiye': { lat: 38.9637, lon: 35.2433 },
+                'Mexico': { lat: 23.6345, lon: -102.5528 },
+                'Argentina': { lat: -38.4161, lon: -63.6167 },
+                'Colombia': { lat: 4.5709, lon: -74.2973 },
+                'Singapore': { lat: 1.3521, lon: 103.8198 },
+                'Chile': { lat: -35.6751, lon: -71.543 },
+                'Latvia': { lat: 56.8796, lon: 24.6032 },
+                'Norway': { lat: 60.472, lon: 8.4689 },
+                'Estonia': { lat: 58.5953, lon: 25.0136 },
+                'Lithuania': { lat: 55.1694, lon: 23.8813 },
+                'Poland': { lat: 51.9194, lon: 19.1451 },
+                'Israel': { lat: 31.0461, lon: 34.8516 },
+                'Slovenia': { lat: 46.1512, lon: 14.9955 },
+                'Switzerland': { lat: 46.8182, lon: 8.2275 },
+                'Portugal': { lat: 39.3999, lon: -8.2245 },
+                'Romania': { lat: 45.9432, lon: 24.9668 },
+                'Greece': { lat: 39.0742, lon: 21.8243 },
+                'Korea': { lat: 35.9078, lon: 127.7669 },
+                'Italy': { lat: 41.8719, lon: 12.5674 },
+                'Spain': { lat: 40.4637, lon: -3.7492 },
+                'Denmark': { lat: 56.2639, lon: 9.5018 },
+                'Ireland': { lat: 53.1424, lon: -7.6921 },
+                'Finland': { lat: 61.9241, lon: 25.7482 },
+                'Austria': { lat: 47.5162, lon: 14.5501 },
+                'Slovakia': { lat: 48.669, lon: 19.699 },
+                'USA': { lat: 37.0902, lon: -95.7129 },
+                'UK': { lat: 55.3781, lon: -3.436 },
+                'France': { lat: 46.2276, lon: 2.2137 },
+                'Germany': { lat: 51.1657, lon: 10.4515 },
+                'Australia': { lat: -25.2744, lon: 133.7751 },
+                'Canada': { lat: 56.1304, lon: -106.3468 },
+                'Hungary': { lat: 47.1625, lon: 19.5033 },
+                'Japan': { lat: 36.2048, lon: 138.2529 },
+                'New Zealand': { lat: -40.9006, lon: 174.886 },
+                'Czech Rep.': { lat: 49.8175, lon: 15.4729 },
+                'Sweden': { lat: 60.1282, lon: 18.6435 },
+                'Belgium': { lat: 50.5039, lon: 4.4699 },
+                'Netherlands': { lat: 52.1326, lon: 5.2913 }
+            };
 
+            // Build data from global usage stats
+            const countryData = allCountriesData.map(c => {
+                const name = c.country.replace(/\s[^\s]*$/, '').trim();
+                const coords = countryCoordinates[name];
+                if (!coords) return null;
+                return { lat: coords.lat, lon: coords.lon, value: c.usage, name };
+            }).filter(Boolean);
+
+            const dots = [];
             countryData.forEach(country => {
                 const phi = (90 - country.lat) * Math.PI / 180;
                 const theta = (country.lon + 180) * Math.PI / 180;
-                
+
                 const x = -5 * Math.sin(phi) * Math.cos(theta);
                 const y = 5 * Math.cos(phi);
                 const z = 5 * Math.sin(phi) * Math.sin(theta);
 
                 const dotGeometry = new THREE.SphereGeometry(0.1, 8, 8);
-                const color = country.value > 70 ? 0x10b981 : country.value > 50 ? 0xf59e0b : 0xef4444;
-                const dotMaterial = new THREE.MeshBasicMaterial({ color: color });
+                const color = new THREE.Color();
+                color.setHSL((country.value / 100) * 0.33, 1, 0.5);
+                const dotMaterial = new THREE.MeshBasicMaterial({ color });
                 const dot = new THREE.Mesh(dotGeometry, dotMaterial);
                 dot.position.set(x, y, z);
+                dot.userData = { name: country.name, value: country.value };
                 globe.add(dot);
+                dots.push(dot);
             });
 
-            // Animation
-            let mouseX = 0;
-            let mouseY = 0;
+            // Interaction & animation
+            const raycaster = new THREE.Raycaster();
+            const mouse = new THREE.Vector2();
+            let rotX = 0;
+            let rotY = 0;
 
             container.addEventListener('mousemove', (event) => {
                 const rect = container.getBoundingClientRect();
-                mouseX = ((event.clientX - rect.left) / width) * 2 - 1;
-                mouseY = -((event.clientY - rect.top) / height) * 2 + 1;
+                const x = ((event.clientX - rect.left) / width) * 2 - 1;
+                const y = -((event.clientY - rect.top) / height) * 2 + 1;
+                rotX = x;
+                rotY = y;
+                mouse.x = x;
+                mouse.y = y;
+                raycaster.setFromCamera(mouse, camera);
+                const intersects = raycaster.intersectObjects(dots);
+                if (intersects.length > 0) {
+                    const { name, value } = intersects[0].object.userData;
+                    tooltip.style.left = `${event.clientX - rect.left + 10}px`;
+                    tooltip.style.top = `${event.clientY - rect.top + 10}px`;
+                    tooltip.innerHTML = `<strong>${name}</strong><br/>${value}% AI use`;
+                    tooltip.classList.add('show');
+                } else {
+                    tooltip.classList.remove('show');
+                }
             });
+
+            container.addEventListener('mouseleave', () => tooltip.classList.remove('show'));
 
             function animate() {
                 requestAnimationFrame(animate);
-                
+
                 globe.rotation.y += 0.002;
                 atmosphere.rotation.y += 0.003;
-                
+
                 // Mouse interaction
-                globe.rotation.x = mouseY * 0.5;
-                globe.rotation.y += mouseX * 0.01;
-                
+                globe.rotation.x = rotY * 0.5;
+                globe.rotation.y += rotX * 0.01;
+
                 renderer.render(scene, camera);
             }
 
